@@ -1,4 +1,10 @@
-import { Card, CardBody, Button, Typography } from "@material-tailwind/react";
+import {
+  Card,
+  CardBody,
+  Button,
+  Typography,
+  Dialog,
+} from "@material-tailwind/react";
 
 import { useNavigate } from "react-router-dom";
 import { ProfileInfoCard } from "@/widgets/cards";
@@ -10,10 +16,9 @@ import { db } from "@/firebase";
 import { ethers } from "ethers";
 
 import { toast } from "react-toastify";
-import { usdt, usdtAMOUNT, vendswap } from "@/blockchain/config";
+import { usdt, usdtAMOUNT, vendswap, usdc } from "@/blockchain/config";
 import vendswapAbi from "@/blockchain/vendswap.abi.json";
 import usdtAbi from "@/blockchain/usdt.abi.json";
-import { ordersOverviewData } from "@/data";
 import {
   ArrowDownOnSquareStackIcon,
   CircleStackIcon,
@@ -26,6 +31,7 @@ import {
 export function OrderDetails() {
   const { user } = UserAuth();
   const navigate = useNavigate();
+  const [modal, setModal] = useState(false);
 
   const [order, setOrder] = useState({
     progress: { stages: [] },
@@ -47,7 +53,7 @@ export function OrderDetails() {
     setOrder(res);
   }
 
-  const payEscrow = async () => {
+  const payEscrow = async (token, tokenName) => {
     let o = order;
 
     try {
@@ -57,12 +63,11 @@ export function OrderDetails() {
 
       const signer = await provider.getSigner();
 
-      const ctUSDT = new ethers.Contract(usdt, usdtAbi, signer);
-      console.log(Number(await ctUSDT.allowance(m, vendswap)));
+      const ctToken = new ethers.Contract(token, usdtAbi, signer);
       try {
-        if ((await ctUSDT.allowance(m, vendswap)) < usdtAMOUNT) {
+        if ((await ctToken.allowance(m, vendswap)) < usdtAMOUNT) {
           toast.info("Approving the USDT");
-          let tx = await ctUSDT.approve(vendswap, usdtAMOUNT);
+          let tx = await ctToken.approve(vendswap, usdtAMOUNT);
           let req = await tx.wait();
         }
       } catch (e) {
@@ -86,20 +91,26 @@ export function OrderDetails() {
           numberofDevices: o["How many devices are you transferring?"],
           buyerClaimed: false,
           sellerClaimed: false,
+          tokenAddress: token,
         });
 
         let req = await tx.wait().then(async (receipt) => {
-          console.log(receipt);
           o.progress.stages["Escrow Paid"] = new Date(
             Date.now()
           ).toLocaleString();
           o.progress.status += 15;
           await updateDoc(doc(db, "orders", String(o.id)), {
             ...o,
-            "Escrow Amount": usdtAMOUNT,
+            "Escrow Amount": (usdtAMOUNT / 100) * 95,
+            "Platform Fee": (usdtAMOUNT / 100) * 5,
             "Escrow Tx": receipt.transactionHash,
             "Escrow Paid": "Yes",
-          }).then(() => navigate("/dashboard/swap-details?id=" + o.id));
+            "Escrow Token Name": tokenName,
+            "Escrow Token Address": token,
+          }).then(() => {
+            setModal(false);
+            navigate("/dashboard/swap");
+          });
         });
       } catch (e) {
         toast.error("Failed");
@@ -175,7 +186,7 @@ export function OrderDetails() {
 
         let req = await tx.wait().then(async (receipt) => {
           console.log(receipt);
-          o.progress.stages["Seller Claimed Escrow"] = new Date(
+          o.progress.stages["Seller Withdrawn Escrow"] = new Date(
             Date.now()
           ).toLocaleString();
           o.progress.status += 15;
@@ -253,6 +264,21 @@ export function OrderDetails() {
                   color="blue-gray"
                   className="font-semibold capitalize"
                 >
+                  How many devices are you transferring?
+                </Typography>
+                <Typography
+                  variant="small"
+                  className="font-normal text-blue-gray-500"
+                >
+                  {order["How many devices are you transferring?"]}
+                </Typography>
+              </div>
+              <div className="grid grid-cols-2">
+                <Typography
+                  variant="small"
+                  color="blue-gray"
+                  className="font-semibold capitalize"
+                >
                   What's your monthly revenue per device?
                 </Typography>
                 <Typography
@@ -300,13 +326,13 @@ export function OrderDetails() {
                   color="blue-gray"
                   className="font-semibold capitalize"
                 >
-                  Seller Claimed Escrow at:
+                  Seller Withdrawn Escrow at:
                 </Typography>
                 <Typography
                   variant="small"
                   className="font-normal text-blue-gray-500"
                 >
-                  {order.progress.stages["Seller Claimed Escrow"]}
+                  {order.progress.stages["Seller Withdrawn Escrow"]}
                 </Typography>
               </div>
               <div className="grid grid-cols-2">
@@ -521,13 +547,28 @@ export function OrderDetails() {
                   color="blue-gray"
                   className="font-semibold capitalize"
                 >
+                  Platform Fee:
+                </Typography>
+                <Typography
+                  variant="small"
+                  className="font-normal text-blue-gray-500"
+                >
+                  ${parseInt(order["Platform Fee"] / 1e6)}
+                </Typography>
+              </div>
+              <div className="grid grid-cols-2">
+                <Typography
+                  variant="small"
+                  color="blue-gray"
+                  className="font-semibold capitalize"
+                >
                   Escrow Amount:
                 </Typography>
                 <Typography
                   variant="small"
                   className="font-normal text-blue-gray-500"
                 >
-                  {parseInt(order["Escrow Amount"] / 1e18)}
+                  ${parseInt(order["Escrow Amount"] / 1e6)}
                 </Typography>
               </div>
               <div className="grid grid-cols-2">
@@ -641,10 +682,9 @@ export function OrderDetails() {
                       variant="small"
                       className="text-xs font-medium text-blue-gray-500"
                     >
-                      {order.progress.stages["Devices Serials Seller"] ==
-                        "Incomplete" &&
+                      {order.progress.stages["Escrow Paid"] == "Incomplete" &&
                       user.uid == order.user &&
-                      order.progress.status == "10" ? (
+                      order.progress.status <= "25" ? (
                         <Button
                           variant="filled"
                           size="sm"
@@ -689,14 +729,16 @@ export function OrderDetails() {
                       {order.progress.stages["Escrow Paid"] == "Incomplete" &&
                       user.uid == order.user &&
                       order.progress.status == "25" ? (
-                        <Button
-                          variant="filled"
-                          size="sm"
-                          onClick={() => payEscrow()}
-                          className="block"
-                        >
-                          Pay ESCROW
-                        </Button>
+                        <>
+                          <Button
+                            variant="filled"
+                            size="sm"
+                            onClick={() => setModal(true)}
+                            className="block"
+                          >
+                            PAY ESCROW
+                          </Button>
+                        </>
                       ) : (
                         order.progress.stages["Escrow Paid"]
                       )}
@@ -846,7 +888,7 @@ export function OrderDetails() {
                   <div className="relative p-1 after:absolute after:-bottom-6 after:left-2/4 after:h-0 after:w-0.5 after:-translate-x-2/4 after:bg-blue-gray-50 after:content-['']">
                     <CircleStackIcon
                       className={`!h-5 !w-5 ${
-                        order.progress.stages["Seller Claimed Escrow"] ==
+                        order.progress.stages["Seller Withdrawn Escrow"] ==
                         "Incomplete"
                           ? "text-blue-gray-500"
                           : "text-green-600"
@@ -859,16 +901,16 @@ export function OrderDetails() {
                       color="blue-gray"
                       className="block font-medium"
                     >
-                      Seller Claimed Escrow
+                      Seller Withdrawn Escrow
                     </Typography>
                     <Typography
                       as="span"
                       variant="small"
                       className="text-xs font-medium text-blue-gray-500"
                     >
-                      {/* {order.progress.stages["Seller Claimed Escrow"]} */}
+                      {/* {order.progress.stages["Seller Withdrawn Escrow"]} */}
 
-                      {order.progress.stages["Seller Claimed Escrow"] ==
+                      {order.progress.stages["Seller Withdrawn Escrow"] ==
                         "Incomplete" &&
                       user.uid == order.user &&
                       order.progress.status >= "70" ? (
@@ -881,7 +923,7 @@ export function OrderDetails() {
                           Withdraw
                         </Button>
                       ) : (
-                        order.progress.stages["Seller Claimed Escrow"]
+                        order.progress.stages["Seller Withdrawn Escrow"]
                       )}
                     </Typography>
                   </div>
@@ -891,6 +933,50 @@ export function OrderDetails() {
           </div>
         </CardBody>
       </Card>
+      <Dialog open={modal} handler={setModal} className="p-4">
+        <Typography variant="h6" color="blue-gray">
+          Pay Escrow for Order# {order.id}
+        </Typography>
+        <Typography
+          as="span"
+          variant="small"
+          className="my-2 text-sm font-normal text-blue-gray-500"
+        >
+          Pay escrow for{" "}
+          <strong>{order["How many devices are you transferring?"]} </strong>
+          devices. <br />
+          You will not be able to change/add devices after this step.
+        </Typography>
+        <Button
+          variant="filled"
+          size="sm"
+          onClick={() => {
+            navigate("/dashboard/swap-confirmation?id=" + order.id);
+          }}
+          className="mx-1 my-2"
+          color="green"
+        >
+          ADD MORE DEVICES
+        </Button>
+        <br />
+        <Button
+          variant="filled"
+          size="sm"
+          onClick={() => payEscrow(usdc, "USDC")}
+          className="mx-1 my-2"
+        >
+          ESCROW $USDC
+        </Button>
+
+        <Button
+          variant="filled"
+          size="sm"
+          onClick={() => payEscrow(usdt, "USDT")}
+          className="mx-1 my-2"
+        >
+          ESCROW $USDT
+        </Button>
+      </Dialog>
     </>
   );
 }

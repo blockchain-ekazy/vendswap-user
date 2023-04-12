@@ -37,15 +37,9 @@
         "type": "uint256"
       },
       { "internalType": "bool", "name": "buyerClaimed", "type": "bool" },
-      { "internalType": "bool", "name": "sellerClaimed", "type": "bool" }
+      { "internalType": "bool", "name": "sellerClaimed", "type": "bool" },
+      { "internalType": "address", "name": "tokenAddress", "type": "address" }
     ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "USDT",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -102,7 +96,12 @@
             "type": "uint256"
           },
           { "internalType": "bool", "name": "buyerClaimed", "type": "bool" },
-          { "internalType": "bool", "name": "sellerClaimed", "type": "bool" }
+          { "internalType": "bool", "name": "sellerClaimed", "type": "bool" },
+          {
+            "internalType": "address",
+            "name": "tokenAddress",
+            "type": "address"
+          }
         ],
         "internalType": "struct VendSwap.Order",
         "name": "_order",
@@ -112,6 +111,13 @@
     "name": "createOrder",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "fee",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -154,9 +160,9 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "usdt_", "type": "address" }
+      { "internalType": "uint256", "name": "fee_", "type": "uint256" }
     ],
-    "name": "setUSDT",
+    "name": "setFee",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

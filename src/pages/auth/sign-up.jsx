@@ -184,7 +184,7 @@ export function SignUp() {
                 onChange={(e) => setPassword2(e.target.value)}
               />
 
-              <button className="rounded-lg bg-blue-500 p-3 text-xs font-bold text-white">
+              <button onClick={handleSubmit} className="rounded-lg bg-blue-500 p-3 text-xs font-bold text-white">
                 SIGN UP
               </button>
             </CardBody>

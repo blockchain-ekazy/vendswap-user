@@ -41,10 +41,12 @@ export function SignUp() {
 
     if (password != password2) {
       toast.error("Passwords do not match");
+      alert("Passwords do not match");
       return;
     }
     if (!ethers.isAddress(data["Wallet Address"])) {
       toast.error("Invalid Wallet Address");
+      alert("Invalid Wallet Address");
       return;
     }
 
@@ -53,6 +55,7 @@ export function SignUp() {
       navigate("/dashboard/home");
     } catch (e) {
       toast.error(e.message);
+      alert(e.message);
     }
   };
 

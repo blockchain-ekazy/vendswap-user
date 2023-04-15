@@ -38,19 +38,17 @@ export function SignUp() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-
     if (password != password2) {
       toast.error("Passwords do not match");
       alert("Passwords do not match");
       return;
     }
-    alert("test");
-//    if (!ethers.isAddress(data["Wallet Address"])) {
-      //toast.error("Invalid Wallet Address");
-      //alert("Invalid Wallet Address");
-      //return;
-//    }
-alert("test2");
+
+    if (!ethers.isAddress(data["Wallet Address"])) {
+      toast.error("Invalid Wallet Address");
+      alert("Invalid Wallet Address");
+      return;
+    }
     try {
       await createUser(email, password, data);
       navigate("/dashboard/home");

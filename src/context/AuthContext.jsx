@@ -4,6 +4,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
+  sendEmailVerification
 } from "firebase/auth";
 import { auth, db } from "../firebase";
 import {
@@ -48,6 +49,7 @@ export const AuthContextProvider = ({ children }) => {
             registration_date: String(Date.now()),
             ...user_data_,
           });
+          await sendEmailVerification(user.user);
         } catch (e) {
           console.log(e);
           alert(e);

@@ -44,11 +44,11 @@ export function SignUp() {
       return;
     }
 
-    if (!ethers.isAddress(data["Wallet Address"])) {
-      toast.error("Invalid Wallet Address");
-      alert("Invalid Wallet Address");
-      return;
-    }
+    //if (!ethers.isAddress(data["Wallet Address"])) {
+      //toast.error("Invalid Wallet Address");
+      //alert("Invalid Wallet Address");
+      //return;
+   // }
     try {
       await createUser(email, password, data);
       navigate("/dashboard/home");

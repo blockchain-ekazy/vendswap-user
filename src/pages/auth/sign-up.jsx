@@ -43,7 +43,7 @@ export function SignUp() {
       alert("Passwords do not match");
       return;
     }
-
+console.log(ethers,ethers.isAddress(data["Wallet Address"]),data);
     //if (!ethers.isAddress(data["Wallet Address"])) {
       //toast.error("Invalid Wallet Address");
       //alert("Invalid Wallet Address");

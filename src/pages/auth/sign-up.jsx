@@ -84,6 +84,7 @@ console.log(ethers,ethers.isAddress(data["Wallet Address"]),data);
                     onChange={(e) =>
                       setData({ ...data, "First Name": e.target.value })
                     }
+                    className="w-full"
                   />
                 </div>
                 <div>

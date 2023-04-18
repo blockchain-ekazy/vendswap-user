@@ -51,7 +51,7 @@ console.log(ethers,ethers.isAddress(data["Wallet Address"]),data);
    // }
     try {
       await createUser(email, password, data);
-      navigate("/dashboard/home");
+      toast.success("Verification email sent");
     } catch (e) {
       toast.error(e.message);
       alert(e.message);

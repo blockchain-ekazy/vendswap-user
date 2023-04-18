@@ -41,7 +41,8 @@ export const AuthContextProvider = ({ children }) => {
   }, []);
 
   const createUser = async (email, password, user_data_) => {
-    return createUserWithEmailAndPassword(auth, email, password).then(
+   alert(true);
+     return createUserWithEmailAndPassword(auth, email, password).then(
       async (user) => {
         try {
           const docRef = doc(db, "users", String(user.user.uid));

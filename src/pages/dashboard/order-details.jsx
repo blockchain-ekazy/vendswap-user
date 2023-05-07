@@ -64,6 +64,9 @@ export function OrderDetails() {
       const signer = await provider.getSigner();
 
       const ctToken = new ethers.Contract(token, usdtAbi, signer);
+
+      console.log(await ctToken.allowance(m, vendswap));
+
       try {
         if ((await ctToken.allowance(m, vendswap)) < usdtAMOUNT) {
           toast.info("Approving the USDT");
@@ -382,8 +385,7 @@ export function OrderDetails() {
                     className="font-semibold underline"
                     target="_blank"
                     href={
-                      "https://goerli.etherscan.io/address/" +
-                      order["Buyer Wallet"]
+                      "https://etherscan.io/address/" + order["Buyer Wallet"]
                     }
                   >
                     {order["Buyer Wallet"].substring(0, 6)}....
@@ -456,8 +458,7 @@ export function OrderDetails() {
                     className="font-semibold underline"
                     target="_blank"
                     href={
-                      "https://goerli.etherscan.io/address/" +
-                      order["Seller Wallet"]
+                      "https://etherscan.io/address/" + order["Seller Wallet"]
                     }
                   >
                     {order["Seller Wallet"].substring(0, 6)}....
@@ -528,9 +529,7 @@ export function OrderDetails() {
                 >
                   <a
                     className="font-semibold underline"
-                    href={
-                      "https://goerli.etherscan.io/tx/" + order["Escrow Tx"]
-                    }
+                    href={"https://etherscan.io/tx/" + order["Escrow Tx"]}
                     target="_blank"
                   >
                     {order["Escrow Tx"].substring(0, 6)}....

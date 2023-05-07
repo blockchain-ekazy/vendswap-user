@@ -5,6 +5,7 @@ import { AuthContextProvider } from "./context/AuthContext";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import ProtectedRoute from "./ProtectedRoute";
+import { VerifyEmail } from "./pages/auth/verify-email";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/" element={<Navigate to="/sign-in" replace />} />
       </Routes>
       <ToastContainer theme="colored" hideProgressBar={true} />

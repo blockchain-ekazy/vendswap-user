@@ -9,7 +9,7 @@ import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 
 export function OrderConfirmation() {
-  const { user } = UserAuth();
+  const { user, user_data } = UserAuth();
   const navigate = useNavigate();
 
   const [size, setSize] = useState(0);
@@ -78,6 +78,7 @@ export function OrderConfirmation() {
       o["Devices Serials Seller"] = values_;
       o.progress.status = 25;
     } else if (user.email == o["Buyer Email"]) {
+      o["Buyer Wallet"] = user_data["Wallet Address"];
       o.progress.stages["Devices Serials Buyer"] = new Date(
         Date.now()
       ).toLocaleString();

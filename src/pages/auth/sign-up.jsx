@@ -37,21 +37,21 @@ export function SignUp() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (password != password2) {
       toast.error("Passwords do not match");
-      alert("Passwords do not match");
       return;
     }
-//console.log(ethers,ethers.isAddress(data["Wallet Address"]),data);
+    //console.log(ethers,ethers.isAddress(data["Wallet Address"]),data);
     //if (!ethers.isAddress(data["Wallet Address"])) {
-      //toast.error("Invalid Wallet Address");
-      //alert("Invalid Wallet Address");
-      //return;
-   // }
+    //toast.error("Invalid Wallet Address");
+    //alert("Invalid Wallet Address");
+    //return;
+    // }
     try {
       await createUser(email, password, data);
       toast.success("Verification email sent");
+      navigate("/sign-in");
     } catch (e) {
       toast.error(e.message);
       alert(e.message);
@@ -188,7 +188,10 @@ export function SignUp() {
                 onChange={(e) => setPassword2(e.target.value)}
               />
 
-              <button onClick={handleSubmit} className="rounded-lg bg-blue-500 p-3 text-xs font-bold text-white">
+              <button
+                onClick={handleSubmit}
+                className="rounded-lg bg-blue-500 p-3 text-xs font-bold text-white"
+              >
                 SIGN UP
               </button>
             </CardBody>

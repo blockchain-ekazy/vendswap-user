@@ -39,15 +39,22 @@ export function OrderConfirmation() {
   }, [size]);
 
   async function generateInputs() {
+    let o = { ...order };
+    let role;
+    if (user.email == o.seller) role = "Devices Serials Seller";
+    else role = "Devices Serials Buyer";
+
     let inputs_ = [];
     for (let i = 0; i < size; i++) {
       inputs_.push(
         <div className={"input-" + i + " relative duration-1000"}>
           <Input
-            type="number"
+            type="texr"
             label={"Enter Serial Number of Device #" + eval(i + 1)}
             size="lg"
             id={"input-" + i}
+            onChange={() => updateInput(e.target.value, i)}
+            value={o[role][i]}
           />
           <QrCodeIcon
             onClick={() => scancode(i)}
@@ -96,6 +103,7 @@ export function OrderConfirmation() {
   };
 
   const updateInput = (value, index) => {
+    console.log(value, index);
     document.getElementById("input-" + index).value = value;
 
     document
@@ -119,6 +127,7 @@ export function OrderConfirmation() {
         <BarcodeScannerComponent
           onUpdate={(err, result) => {
             if (result) {
+              console.log(result);
               setscanner(<></>);
               updateInput(result.text, index);
             }

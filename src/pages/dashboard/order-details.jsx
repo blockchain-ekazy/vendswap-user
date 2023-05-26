@@ -65,8 +65,6 @@ export function OrderDetails() {
 
       const ctToken = new ethers.Contract(token, usdtAbi, signer);
 
-      console.log(await ctToken.allowance(m, vendswap));
-
       try {
         if ((await ctToken.allowance(m, vendswap)) < usdtAMOUNT) {
           toast.info("Approving the USDT");
@@ -79,7 +77,30 @@ export function OrderDetails() {
         return;
       }
 
+      if (!ethers.utils.isAddress(o["Buyer Wallet"])) {
+        toast.error("Buyer Wallet address not found or invalid");
+        return;
+      }
+      if (!ethers.utils.isAddress(o["Seller Wallet"])) {
+        toast.error("Seller Wallet address not found or invalid");
+        return;
+      }
+
       const ct = new ethers.Contract(vendswap, vendswapAbi, signer);
+      console.log({
+        id: o.id,
+        buyerEmail: o["Buyer Email"],
+        sellerEmail: o.seller,
+        buyerWallet: o["Buyer Wallet"],
+        sellerWallet: o["Seller Wallet"],
+        amount: String(usdtAMOUNT),
+        buyerAmount: 0,
+        sellerAmount: 0,
+        numberofDevices: o["How many devices are you transferring?"],
+        buyerClaimed: false,
+        sellerClaimed: false,
+        tokenAddress: token,
+      });
       try {
         toast.info("Confirming transaction");
         let tx = await ct.createOrder({
@@ -121,7 +142,7 @@ export function OrderDetails() {
       }
     } catch (e) {
       console.log(e);
-      toast.error("Metamask not found");
+      toast.error(e.message);
     }
   };
 
@@ -704,48 +725,6 @@ export function OrderDetails() {
                 </div>
                 <div className="flex items-start gap-4 py-3">
                   <div className="relative p-1 after:absolute after:-bottom-6 after:left-2/4 after:h-4/6 after:w-0.5 after:-translate-x-2/4 after:bg-blue-gray-50 after:content-['']">
-                    <CurrencyDollarIcon
-                      className={`!h-5 !w-5 ${
-                        order.progress.stages["Escrow Paid"] == "Incomplete"
-                          ? "text-blue-gray-500"
-                          : "text-green-600"
-                      } `}
-                    />
-                  </div>
-                  <div>
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="block font-medium"
-                    >
-                      Escrow Paid by Seller
-                    </Typography>
-                    <Typography
-                      as="span"
-                      variant="small"
-                      className="text-xs font-medium text-blue-gray-500"
-                    >
-                      {order.progress.stages["Escrow Paid"] == "Incomplete" &&
-                      user.uid == order.user &&
-                      order.progress.status == "25" ? (
-                        <>
-                          <Button
-                            variant="filled"
-                            size="sm"
-                            onClick={() => setModal(true)}
-                            className="block"
-                          >
-                            PAY ESCROW
-                          </Button>
-                        </>
-                      ) : (
-                        order.progress.stages["Escrow Paid"]
-                      )}
-                    </Typography>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4 py-3">
-                  <div className="relative p-1 after:absolute after:-bottom-6 after:left-2/4 after:h-4/6 after:w-0.5 after:-translate-x-2/4 after:bg-blue-gray-50 after:content-['']">
                     <QrCodeIcon
                       className={`!h-5 !w-5 ${
                         order.progress.stages["Devices Serials Buyer"] ==
@@ -771,7 +750,7 @@ export function OrderDetails() {
                       {order.progress.stages["Devices Serials Buyer"] ==
                         "Incomplete" &&
                       user.email == order["Buyer Email"] &&
-                      order.progress.status == "40" ? (
+                      order.progress.status == "25" ? (
                         <Button
                           variant="filled"
                           size="sm"
@@ -790,6 +769,49 @@ export function OrderDetails() {
                     </Typography>
                   </div>
                 </div>
+                <div className="flex items-start gap-4 py-3">
+                  <div className="relative p-1 after:absolute after:-bottom-6 after:left-2/4 after:h-4/6 after:w-0.5 after:-translate-x-2/4 after:bg-blue-gray-50 after:content-['']">
+                    <CurrencyDollarIcon
+                      className={`!h-5 !w-5 ${
+                        order.progress.stages["Escrow Paid"] == "Incomplete"
+                          ? "text-blue-gray-500"
+                          : "text-green-600"
+                      } `}
+                    />
+                  </div>
+                  <div>
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="block font-medium"
+                    >
+                      Escrow Paid by Seller
+                    </Typography>
+                    <Typography
+                      as="span"
+                      variant="small"
+                      className="text-xs font-medium text-blue-gray-500"
+                    >
+                      {order.progress.stages["Escrow Paid"] == "Incomplete" &&
+                      user.uid == order.user &&
+                      order.progress.status == "40" ? (
+                        <>
+                          <Button
+                            variant="filled"
+                            size="sm"
+                            onClick={() => setModal(true)}
+                            className="block"
+                          >
+                            PAY ESCROW
+                          </Button>
+                        </>
+                      ) : (
+                        order.progress.stages["Escrow Paid"]
+                      )}
+                    </Typography>
+                  </div>
+                </div>
+
                 <div className="flex items-start gap-4 py-3">
                   <div className="relative p-1 after:absolute after:-bottom-6 after:left-2/4 after:h-4/6 after:w-0.5 after:-translate-x-2/4 after:bg-blue-gray-50 after:content-['']">
                     <UserCircleIcon

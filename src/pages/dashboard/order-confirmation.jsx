@@ -1,12 +1,12 @@
 import { Card, CardBody, Button, Input } from "@material-tailwind/react";
 import { QrCodeIcon, XCircleIcon } from "@heroicons/react/24/outline";
 
-import BarcodeScannerComponent from "react-qr-barcode-scanner";
 import { useNavigate } from "react-router-dom";
 import { UserAuth } from "@/context/AuthContext";
 import { useEffect, useState } from "react";
 import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
+import { BarcodeScanner } from "./BarcodeScanner";
 
 export function OrderConfirmation() {
   const { user, user_data } = UserAuth();
@@ -40,12 +40,15 @@ export function OrderConfirmation() {
 
   async function generateInputs() {
     let o = { ...order };
-    let role;
-    if (user.email == o.seller) role = "Devices Serials Seller";
-    else role = "Devices Serials Buyer";
+    let role_;
+    if (user.email == o.seller) role_ = "Devices Serials Seller";
+    else role_ = "Devices Serials Buyer";
 
     let inputs_ = [];
     for (let i = 0; i < size; i++) {
+      let value;
+      if (o[role_]) value = o[role_][i];
+
       inputs_.push(
         <div className={"input-" + i + " relative duration-1000"}>
           <Input
@@ -53,8 +56,7 @@ export function OrderConfirmation() {
             label={"Enter Serial Number of Device #" + eval(i + 1)}
             size="lg"
             id={"input-" + i}
-            onChange={() => updateInput(e.target.value, i)}
-            value={o[role][i]}
+            defaultValue={value}
           />
           <QrCodeIcon
             onClick={() => scancode(i)}
@@ -83,16 +85,16 @@ export function OrderConfirmation() {
         Date.now()
       ).toLocaleString();
       o["Devices Serials Seller"] = values_;
-      o.progress.status = 25;
+      // o.progress.status = 25;
     } else if (user.email == o["Buyer Email"]) {
       o["Buyer Wallet"] = user_data["Wallet Address"];
       o.progress.stages["Devices Serials Buyer"] = new Date(
         Date.now()
       ).toLocaleString();
       o["Devices Serials Buyer"] = values_;
-      o.progress.status = 55;
     }
     o["How many devices are you transferring?"] = size_;
+    o.progress.status += 15;
     try {
       await updateDoc(doc(db, "orders", String(o.id)), o).then(() =>
         navigate("/dashboard/swap-details?id=" + o.id)
@@ -103,7 +105,6 @@ export function OrderConfirmation() {
   };
 
   const updateInput = (value, index) => {
-    console.log(value, index);
     document.getElementById("input-" + index).value = value;
 
     document
@@ -119,21 +120,20 @@ export function OrderConfirmation() {
 
   const scancode = (index) => {
     setscanner(
-      <div className="fixed right-0 z-10 overflow-hidden rounded-3xl shadow-md">
-        <XCircleIcon
-          className="absolute right-0 top-0 w-10 cursor-pointer text-white"
-          onClick={() => setscanner(<></>)}
-        ></XCircleIcon>
-        <BarcodeScannerComponent
-          onUpdate={(err, result) => {
-            if (result) {
-              console.log(result);
+      <>
+        <div className="fixed right-0 z-10 overflow-hidden rounded-3xl shadow-md">
+          <XCircleIcon
+            className="absolute right-0 top-0 w-10 cursor-pointer text-white"
+            onClick={() => setscanner(<></>)}
+          ></XCircleIcon>
+          <BarcodeScanner
+            onResult={(r) => {
               setscanner(<></>);
-              updateInput(result.text, index);
-            }
-          }}
-        />
-      </div>
+              updateInput(r, index);
+            }}
+          />
+        </div>
+      </>
     );
   };
 

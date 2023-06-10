@@ -6,7 +6,7 @@ import { UserAuth } from "@/context/AuthContext";
 import { useEffect, useState } from "react";
 import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
-import { BarcodeScanner } from "./BarcodeScanner";
+import { BScanner } from "./BarcodeScanner";
 
 export function OrderConfirmation() {
   const { user, user_data } = UserAuth();
@@ -122,16 +122,16 @@ export function OrderConfirmation() {
     setscanner(
       <>
         <div className="fixed right-0 z-10 overflow-hidden rounded-3xl shadow-md">
-          <XCircleIcon
-            className="absolute right-0 top-0 w-10 cursor-pointer text-white"
-            onClick={() => setscanner(<></>)}
-          ></XCircleIcon>
-          <BarcodeScanner
+          <BScanner
             onResult={(r) => {
               setscanner(<></>);
               updateInput(r, index);
             }}
           />
+          {/* <XCircleIcon
+            className="right-0 top-0 z-50 w-10 cursor-pointer text-white"
+            onClick={() => setscanner(<></>)}
+          ></XCircleIcon> */}
         </div>
       </>
     );

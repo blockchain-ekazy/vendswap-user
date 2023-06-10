@@ -19,7 +19,13 @@
   </head>
   <body>
     <div id="root"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/dynamsoft-javascript-barcode/dist/dbr.js"></script>
+    <script>
+        Dynamsoft.DBR.BarcodeScanner.license =
+      "DLS2eyJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSJ9";
+      await Dynamsoft.DBR.BarcodeScanner.loadWasm();
+    </script>
     <script type="module" src="/src/main.jsx"></script>
-    <script src="//unpkg.com/javascript-barcode-reader"></script>
   </body>
 </html>

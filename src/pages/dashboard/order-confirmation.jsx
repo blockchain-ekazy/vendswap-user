@@ -1,5 +1,5 @@
 import { Card, CardBody, Button, Input } from "@material-tailwind/react";
-import { QrCodeIcon, XCircleIcon } from "@heroicons/react/24/outline";
+import { Bars4Icon, QrCodeIcon } from "@heroicons/react/24/outline";
 
 import { useNavigate } from "react-router-dom";
 import { UserAuth } from "@/context/AuthContext";
@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import { BScanner } from "./BarcodeScanner";
+import { QRScanner } from "./QRScanner";
 
 export function OrderConfirmation() {
   const { user, user_data } = UserAuth();
@@ -59,10 +60,15 @@ export function OrderConfirmation() {
             defaultValue={value}
           />
           <QrCodeIcon
-            onClick={() => scancode(i)}
+            onClick={() => scancode(i, "qrcode")}
             title="Scan Code"
             className="absolute top-3 right-10 h-[20px] cursor-pointer duration-300 hover:scale-125"
           ></QrCodeIcon>
+          <Bars4Icon
+            onClick={() => scancode(i, "barcode")}
+            title="Scan Code"
+            className="absolute right-16 top-3 h-[20px] rotate-90 cursor-pointer duration-300 hover:scale-125"
+          ></Bars4Icon>
         </div>
       );
     }
@@ -118,23 +124,35 @@ export function OrderConfirmation() {
     }, 1000);
   };
 
-  const scancode = (index) => {
-    setscanner(
-      <>
-        <div className="fixed right-0 z-10 overflow-hidden rounded-3xl shadow-md">
-          <BScanner
-            onResult={(r) => {
-              setscanner(<></>);
-              updateInput(r, index);
-            }}
-          />
-          {/* <XCircleIcon
-            className="right-0 top-0 z-50 w-10 cursor-pointer text-white"
-            onClick={() => setscanner(<></>)}
-          ></XCircleIcon> */}
-        </div>
-      </>
-    );
+  const scancode = (index, type) => {
+    if (type == "barcode")
+      setscanner(
+        <>
+          <div className="fixed right-0 z-10 overflow-hidden rounded-3xl shadow-md">
+            <BScanner
+              onResult={(r) => {
+                setscanner(<></>);
+                updateInput(r, index);
+              }}
+              value={document.getElementById("input-" + index).value}
+            />
+          </div>
+        </>
+      );
+    if (type == "qrcode")
+      setscanner(
+        <>
+          <div className="fixed right-0 z-10 overflow-hidden rounded-3xl shadow-md">
+            <QRScanner
+              onResult={(r) => {
+                setscanner(<></>);
+                updateInput(r, index);
+              }}
+              value={document.getElementById("input-" + index).value}
+            />
+          </div>
+        </>
+      );
   };
 
   return (

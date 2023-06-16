@@ -23,16 +23,6 @@ export const BScanner = (props) => {
         alert(errMsg);
       }
     })();
-
-    // Dynamsoft.DBR.BarcodeScanner.license =
-    //   "DLS2eyJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSJ9";
-    // (async () => {
-    //   let scanner = await Dynamsoft.DBR.BarcodeScanner.createInstance();
-    //   scanner.onUniqueRead = (txt, result) => {
-    //     props.onResult(txt);
-    //   };
-    //   await scanner.show();
-    // })();
   };
 
   async function showScanner() {
@@ -82,7 +72,7 @@ export const BScanner = (props) => {
             <XCircleIcon
               onClick={() => {
                 scannerHide();
-                props.onResult("");
+                props.onResult(props.value);
               }}
               className=" absolute right-0 top-1/2 w-10 cursor-pointer text-white"
             ></XCircleIcon>

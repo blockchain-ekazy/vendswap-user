@@ -28,7 +28,7 @@ export const QRScanner = (props) => {
               onClick={() => {
                 props.onResult(props.value);
               }}
-              className=" absolute right-0 top-1/2 w-10 cursor-pointer text-white"
+              className=" absolute left-1/2 bottom-0 w-10 -translate-x-1/2 cursor-pointer text-[#554d4d]"
             ></XCircleIcon>
           </div>
         </div>

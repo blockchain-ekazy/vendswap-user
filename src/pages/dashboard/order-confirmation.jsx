@@ -61,7 +61,7 @@ export function OrderConfirmation() {
           <QrCodeIcon
             onClick={() => scancode(i)}
             title="Scan Code"
-            className="absolute top-3 right-10 h-1/2 cursor-pointer duration-300 hover:scale-125"
+            className="absolute top-3 right-10 h-[20px] cursor-pointer duration-300 hover:scale-125"
           ></QrCodeIcon>
         </div>
       );
@@ -85,16 +85,16 @@ export function OrderConfirmation() {
         Date.now()
       ).toLocaleString();
       o["Devices Serials Seller"] = values_;
-      // o.progress.status = 25;
+      o.progress.status = 25;
     } else if (user.email == o["Buyer Email"]) {
       o["Buyer Wallet"] = user_data["Wallet Address"];
       o.progress.stages["Devices Serials Buyer"] = new Date(
         Date.now()
       ).toLocaleString();
       o["Devices Serials Buyer"] = values_;
+      o.progress.status = 40;
     }
     o["How many devices are you transferring?"] = size_;
-    o.progress.status += 15;
     try {
       await updateDoc(doc(db, "orders", String(o.id)), o).then(() =>
         navigate("/dashboard/swap-details?id=" + o.id)
@@ -140,7 +140,7 @@ export function OrderConfirmation() {
   return (
     <>
       <Card className="mx-3 mt-8 mb-6 lg:mx-4">
-        <CardBody className="p-4">
+        <CardBody className="min-h-[200vh] p-4">
           {sizeInput ? (
             <div className="my-4 block">
               <Input

@@ -60,15 +60,10 @@ export function OrderConfirmation() {
             defaultValue={value}
           />
           <QrCodeIcon
-            onClick={() => scancode(i, "qrcode")}
+            onClick={() => scancode(i)}
             title="Scan Code"
             className="absolute top-3 right-10 h-[20px] cursor-pointer duration-300 hover:scale-125"
           ></QrCodeIcon>
-          <Bars4Icon
-            onClick={() => scancode(i, "barcode")}
-            title="Scan Code"
-            className="absolute right-16 top-3 h-[20px] rotate-90 cursor-pointer duration-300 hover:scale-125"
-          ></Bars4Icon>
         </div>
       );
     }
@@ -124,35 +119,20 @@ export function OrderConfirmation() {
     }, 1000);
   };
 
-  const scancode = (index, type) => {
-    if (type == "barcode")
-      setscanner(
-        <>
-          <div className="fixed right-0 z-10 overflow-hidden rounded-3xl shadow-md">
-            <BScanner
-              onResult={(r) => {
-                setscanner(<></>);
-                updateInput(r, index);
-              }}
-              value={document.getElementById("input-" + index).value}
-            />
-          </div>
-        </>
-      );
-    if (type == "qrcode")
-      setscanner(
-        <>
-          <div className="fixed right-0 z-10 overflow-hidden rounded-3xl shadow-md">
-            <QRScanner
-              onResult={(r) => {
-                setscanner(<></>);
-                updateInput(r, index);
-              }}
-              value={document.getElementById("input-" + index).value}
-            />
-          </div>
-        </>
-      );
+  const scancode = (index) => {
+    setscanner(
+      <>
+        <div className="fixed right-0 z-10 overflow-hidden rounded-3xl shadow-md">
+          <BScanner
+            onResult={(r) => {
+              setscanner(<></>);
+              updateInput(r, index);
+            }}
+            value={document.getElementById("input-" + index).value}
+          />
+        </div>
+      </>
+    );
   };
 
   return (

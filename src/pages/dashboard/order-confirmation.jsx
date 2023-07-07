@@ -1,5 +1,5 @@
 import { Card, CardBody, Button, Input } from "@material-tailwind/react";
-import { Bars4Icon, QrCodeIcon } from "@heroicons/react/24/outline";
+import { QrCodeIcon } from "@heroicons/react/24/outline";
 
 import { useNavigate } from "react-router-dom";
 import { UserAuth } from "@/context/AuthContext";
@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import { BScanner } from "./BarcodeScanner";
-import { QRScanner } from "./QRScanner";
+import { toast } from "react-toastify";
 
 export function OrderConfirmation() {
   const { user, user_data } = UserAuth();
@@ -75,6 +75,12 @@ export function OrderConfirmation() {
     e.preventDefault();
 
     let size_ = size;
+
+    if (size_ < 1) {
+      toast.error("At least one device is required!");
+      return;
+    }
+
     let values_ = [];
     for (let i = 0; i < size_; i++) {
       values_.push(e.target[i].value);
@@ -146,9 +152,11 @@ export function OrderConfirmation() {
                 label="Number of Devices"
                 size="lg"
                 value={size}
-                onChange={(e) => {
-                  if (e.target.value >= 1) setSize(e.target.value);
+                onInput={(e) => {
+                  // if (e.target.value >= 1)
+                  setSize(e.target.value);
                 }}
+                min={1}
               />
             </div>
           ) : (

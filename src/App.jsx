@@ -15,7 +15,8 @@ function App() {
   function init() {
     {
       Dynamsoft.DBR.BarcodeScanner.license =
-        "DLS2eyJoYW5kc2hha2VDb2RlIjoiMTAyMDI4NTg0LVRYbFhaV0pRY205cVgyUmljZyIsIm1haW5TZXJ2ZXJVUkwiOiJodHRwczovL21kbHMuZHluYW1zb2Z0b25saW5lLmNvbSIsIm9yZ2FuaXphdGlvbklEIjoiMTAyMDI4NTg0IiwiY2hlY2tDb2RlIjotMTYzMjYxODAxNn0=";
+        // "DLS2eyJoYW5kc2hha2VDb2RlIjoiMTAyMDI4NTg0LVRYbFhaV0pRY205cVgyUmljZyIsIm1haW5TZXJ2ZXJVUkwiOiJodHRwczovL21kbHMuZHluYW1zb2Z0b25saW5lLmNvbSIsIm9yZ2FuaXphdGlvbklEIjoiMTAyMDI4NTg0IiwiY2hlY2tDb2RlIjotMTYzMjYxODAxNn0=";
+        "DLS2eyJoYW5kc2hha2VDb2RlIjoiMTAyMDI4NTg0LVRYbFhaV0pRY205cVgyUmljZyIsIm1haW5TZXJ2ZXJVUkwiOiJodHRwczovL21kbHMuZHluYW1zb2Z0b25saW5lLmNvbSIsIm9yZ2FuaXphdGlvbklEIjoiMTAyMDI4NTg0Iiwic3RhbmRieVNlcnZlclVSTCI6Imh0dHBzOi8vc2Rscy5keW5hbXNvZnRvbmxpbmUuY29tIiwiY2hlY2tDb2RlIjo3NDQzODgwNjV9";
       // await Dynamsoft.DBR.BarcodeScanner.loadWasm();
     }
   }

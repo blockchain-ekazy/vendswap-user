@@ -38,7 +38,7 @@ export function EditProfile() {
   }, []);
 
   function handleSubmit() {
-    if (!ethers.isAddress(data["Wallet Address"])) {
+    if (!ethers.utils.isAddress(data["Wallet Address"])) {
       toast.error("Invalid Wallet Address");
       return;
     }

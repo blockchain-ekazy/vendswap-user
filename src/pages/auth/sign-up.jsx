@@ -38,16 +38,17 @@ export function SignUp() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    console.log(e);
+
     if (password != password2) {
       toast.error("Passwords do not match");
       return;
     }
-    //console.log(ethers,ethers.isAddress(data["Wallet Address"]),data);
-    //if (!ethers.isAddress(data["Wallet Address"])) {
-    //toast.error("Invalid Wallet Address");
-    //alert("Invalid Wallet Address");
-    //return;
-    // }
+
+    if (!ethers.utils.isAddress(data["Wallet Address"])) {
+      toast.error("Invalid Wallet Address");
+      return;
+    }
     try {
       await createUser(email, password, data);
       toast.success("Verification email sent");
@@ -189,7 +190,7 @@ export function SignUp() {
               />
 
               <button
-                onClick={handleSubmit}
+                // onClick={handleSubmit}
                 className="rounded-lg bg-blue-500 p-3 text-xs font-bold text-white"
               >
                 SIGN UP

@@ -75,6 +75,7 @@ export const AuthContextProvider = ({ children }) => {
   };
 
   const loadProfile = async (uid) => {
+    console.log(uid);
     const docRef = doc(db, "users", String(uid));
     setUser_data((await getDoc(docRef)).data());
   };

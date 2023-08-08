@@ -37,18 +37,21 @@ export function EditProfile() {
     setData(user_data);
   }, []);
 
-  function handleSubmit() {
+  function handleSubmit(e) {
+    e.preventDefault();
     if (!ethers.utils.isAddress(data["Wallet Address"])) {
       toast.error("Invalid Wallet Address");
       return;
     }
+
+    updateProfile(user_data);
   }
 
   return (
     <>
       <Card className="mx-3 mt-8 mb-6 lg:mx-4">
         <CardBody className="p-4">
-          <form onSubmit={() => handleSubmit(data)}>
+          <form onSubmit={(e) => handleSubmit(e)}>
             <div className="grid grid-cols-1 gap-4">
               <div>
                 <Input

@@ -93,6 +93,7 @@ export const AuthContextProvider = ({ children }) => {
         setUser(user_data_);
         console.log("Update done");
         toast.success("Profile Update Successful");
+        window.location.href = "/";
       });
     } catch (e) {
       console.log(e);

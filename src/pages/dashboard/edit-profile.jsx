@@ -44,7 +44,7 @@ export function EditProfile() {
       return;
     }
 
-    updateProfile(user_data);
+    updateProfile(data);
   }
 
   return (

@@ -16,7 +16,7 @@ import { db } from "@/firebase";
 import { ethers } from "ethers";
 
 import { toast } from "react-toastify";
-import { usdt, usdtAMOUNT, vendswap, usdc } from "@/blockchain/config";
+import { usdt, usdtAMOUNT, vendswap, usdc, NETWORK } from "@/blockchain/config";
 import vendswapAbi from "@/blockchain/vendswap.abi.json";
 import usdtAbi from "@/blockchain/usdt.abi.json";
 import {
@@ -60,6 +60,12 @@ export function OrderDetails() {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       let m = await provider.send("eth_requestAccounts", []);
       m = m[0];
+
+      let c = await provider.send("eth_chainId", []);
+      if (c != NETWORK) {
+        toast.error("Switch to Polygon Network");
+        return;
+      }
 
       const signer = await provider.getSigner();
 
@@ -954,7 +960,7 @@ export function OrderDetails() {
           </div>
         </CardBody>
       </Card>
-      <Dialog open={modal} handler={setModal} className="p-4">
+      <Dialog open={modal} handler={setModal} className="!bg-none p-4">
         <Typography variant="h6" color="blue-gray">
           Pay Escrow for Order# {order.id}
         </Typography>

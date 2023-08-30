@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.backdrop-blur-sm {
+  --tw-backdrop-blur: blur(0);
+  backdrop-filter: none;
+}

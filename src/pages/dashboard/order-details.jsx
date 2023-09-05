@@ -50,6 +50,38 @@ export function OrderDetails() {
     let id = new URLSearchParams(window.location.search).get("id");
 
     let res = (await getDoc(doc(db, "orders", id))).data();
+    // setOrder(res);
+
+    const provider = new ethers.providers.JsonRpcProvider(
+      "https://rpc.ankr.com/polygon"
+    );
+    const ct = new ethers.Contract(vendswap, vendswapAbi, provider);
+    let chainData = await ct.Orders(id);
+
+    let requiresUpdate = false;
+    if (
+      res.progress.stages["Buyer Claimed Escrow"] == "Incomplete" &&
+      chainData["buyerClaimed"]
+    ) {
+      res.progress.stages["Buyer Claimed Escrow"] = new Date(
+        Date.now()
+      ).toLocaleString();
+      res.progress.status += 15;
+      requiresUpdate = true;
+    }
+    if (
+      res.progress.stages["Seller Withdrawn Escrow"] == "Incomplete" &&
+      chainData["sellerClaimed"]
+    ) {
+      res.progress.stages["Seller Withdrawn Escrow"] = new Date(
+        Date.now()
+      ).toLocaleString();
+      res.progress.status += 15;
+      requiresUpdate = true;
+    }
+
+    if (requiresUpdate) await updateDoc(doc(db, "orders", String(id)), res);
+
     setOrder(res);
   }
 
@@ -161,8 +193,6 @@ export function OrderDetails() {
       m = m[0];
 
       const signer = await provider.getSigner();
-
-      console.log(o["Buyer Amount"].toString());
 
       const ct = new ethers.Contract(vendswap, vendswapAbi, signer);
       try {

@@ -128,6 +128,13 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "recoverETH",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
       { "internalType": "bytes", "name": "adminSignature", "type": "bytes" },
       { "internalType": "uint256", "name": "buyerAmount", "type": "uint256" },
@@ -137,6 +144,15 @@
     "name": "recoverOrder",
     "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "token", "type": "address" }
+    ],
+    "name": "recoverToken",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

@@ -1,6 +1,6 @@
 // prettier-ignore
 export const usdc = "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174";
-export const vendswap = "0xE072883Bb05bD81e053B32B0D73dE479612209b2";
+export const vendswap = "0xF95afd21FfA853947054D9442f1B4a68A6034A34";
 export const usdt = "0x170A18B9190669Cda08965562745A323C907E5Ec";
 export const usdtAMOUNT = 0.05 * 1e6;
 export const NETWORK = "0x89";
